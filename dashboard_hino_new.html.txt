@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Logistik - HINO Indosentosa Trada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        :root {
+            /* Identitas Warna Hino */
+            --hino-red: #ED1C24;
+            --hino-blue: #004692;
+            --bg-body: #F3F4F6;
+            --white: #ffffff;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+        
+        body { background-color: var(--bg-body); color: var(--text-main); display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        aside {
+            width: 260px;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+
+        .brand-section {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--hino-blue) 0%, #003366 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .brand-section h2 { font-size: 1.2rem; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .brand-section p { font-size: 0.8rem; opacity: 0.9; font-weight: 400; margin-bottom: 8px;}
+        .brand-logo { font-size: 2.2rem; margin-bottom: 8px; }
+
+        nav { padding: 1.5rem 1rem; flex: 1; }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; margin-bottom: 8px;
+            border-radius: 8px; cursor: pointer;
+            color: var(--text-muted); font-weight: 500;
+            transition: all 0.2s;
+        }
+        .nav-item:hover { background-color: #F3F4F6; color: var(--hino-blue); }
+        .nav-item.active { background-color: #EFF6FF; color: var(--hino-blue); font-weight: 700; }
+        .nav-item i { font-size: 1.3rem; }
+
+        /* Main Content */
+        main { margin-left: 260px; padding: 2rem; width: 100%; max-width: 1400px; }
+
+        /* Header & Filter */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .header-left h1 { font-size: 1.5rem; color: var(--hino-blue); margin-bottom: 4px; }
+        .header-left span { font-size: 0.85rem; color: var(--text-muted); }
+
+        .branch-filter select {
+            padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 6px;
+            font-weight: 600; color: var(--hino-blue); background: white; cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        /* Cards */
+        .card { background: var(--white); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Stats Dashboard */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card {
+            background: white; padding: 1.5rem; border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-top: 5px solid var(--hino-blue);
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .stat-card.blue { border-top-color: var(--hino-blue); }
+        .stat-card.green { border-top-color: var(--success); }
+        .stat-card.orange { border-top-color: var(--warning); }
+        
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin: 10px 0; }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-icon { align-self: flex-end; font-size: 2rem; color: #E5E7EB; margin-top: -40px; }
+
+        /* Form */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+        .form-group { margin-bottom: 0.5rem; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.7rem; border: 1px solid var(--border); border-radius: 6px;
+            font-size: 0.95rem; outline: none; transition: border 0.2s; background: #FAFAFA;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--hino-blue); background: white; }
+        .full-width { grid-column: 1 / -1; }
+
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; font-size: 0.9rem; }
+        .btn-primary { background: var(--hino-red); color: white; }
+        .btn-primary:hover { background: #c4121a; }
+        .btn-secondary { background: var(--hino-blue); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-info { background: var(--info); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+
+        /* Table */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: #F9FAFB; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; white-space: nowrap; }
+        tr:hover { background: #F9FAFB; }
+        
+        .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .badge-in { background: #D1FAE5; color: #065F46; }
+        .badge-out { background: #FEE2E2; color: #991B1B; }
+
+        /* Admin/Settings Section */
+        .admin-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .admin-box { border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; text-align: left; }
+        .admin-box h3 { margin-bottom: 1rem; font-size: 1.1rem; color: var(--hino-blue); display: flex; align-items: center; gap: 8px; }
+        .admin-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5; }
+        .connection-status { font-weight: bold; font-size: 0.85rem; margin-top: 10px; display: block; }
+        .status-connected { color: var(--success); }
+        .status-disconnected { color: var(--danger); }
+
+        /* Helpers */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Print */
+        @media print {
+            aside, .no-print { display: none !important; }
+            main { margin: 0; padding: 0; }
+            .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+            body { background: white; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+        <div class="brand-section">
+            <i class="ph ph-truck brand-logo"></i>
+            <h2>INDOSENTOSA</h2>
+            <p>HINO DEALER</p>
+            <div style="font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; margin-top: 8px;">
+                PT. Indosentosa Trada
+            </div>
+        </div>
+        <nav>
+            <div class="nav-item active" onclick="switchTab('input', this)">
+                <i class="ph ph-pencil-simple-line"></i> Input Data
+            </div>
+            <div class="nav-item" onclick="switchTab('dashboard', this)">
+                <i class="ph ph-chart-bar"></i> Dashboard
+            </div>
+            <div class="nav-item" onclick="switchTab('data', this)">
+                <i class="ph ph-table"></i> Data Log
+            </div>
+            <div class="nav-item" onclick="switchTab('settings', this)" style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                <i class="ph ph-gear"></i> Pengaturan Data
+            </div>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <header>
+            <div class="header-left">
+                <h1 id="pageTitle">Input Pencatatan Kendaraan</h1>
+                <span id="currentDateTime">Memuat tanggal...</span>
+            </div>
+            
+            <!-- Global Branch Filter -->
+            <div class="branch-filter">
+                <label for="globalBranch" style="margin-right:8px; font-weight:600; color:var(--text-muted);">Lokasi Cabang:</label>
+                <select id="globalBranch" onchange="handleBranchChange()">
+                    <option value="Rancaekek">Hino Rancaekek</option>
+                    <option value="Padalarang">Hino Padalarang</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- TAB 1: INPUT FORM -->
+        <div id="input" class="section fade-in">
+            <div class="card">
+                <div class="card-title">
+                    Formulir Pencatatan (13 Kolom)
+                    <button class="btn btn-outline" onclick="document.getElementById('logForm').reset()" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">Reset</button>
+                </div>
+                <form id="logForm" onsubmit="handleSubmit(event)">
+                    <div class="form-grid">
+                        <!-- 1. Plat Polisi -->
+                        <div class="form-group">
+                            <label>1. Plat Polisi</label>
+                            <input type="text" id="plat" placeholder="B 1234 XYZ" required oninput="this.value = this.value.toUpperCase()" onblur="autoFillDetails()">
+                        </div>
+
+                        <!-- 2. Jenis Kendaraan -->
+                        <div class="form-group">
+                            <label>2. Jenis Kendaraan</label>
+                            <select id="jenisKendaraan" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="Mobil">Mobil</option>
+                                <option value="Motor">Motor</option>
+                            </select>
+                        </div>
+
+                        <!-- 3. Jenis Kunjungan -->
+                        <div class="form-group">
+                            <label>3. Jenis Kunjungan</label>
+                            <select id="jenisKunjungan" required>
+                                <option value="Kendaraan Masuk">Kendaraan Masuk</option>
+                                <option value="Kendaraan Keluar">Kendaraan Keluar</option>
+                            </select>
+                        </div>
+
+                        <!-- 4. Keperluan -->
+                        <div class="form-group">
+                            <label>4. Keperluan Kendaraan</label>
+                            <select id="keperluan" required>
+                                <option value="">-- Pilih Keperluan --</option>
+                                <option value="Unit Service">Unit Service</option>
+                                <option value="Unit Stock">Unit Stock</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Tamu">Tamu</option>
+                                <option value="Dinas/Storing">Dinas/Storing</option>
+                                <option value="Penitipan Kendaraan">Penitipan Kendaraan</option>
+                            </select>
+                        </div>
+
+                        <!-- 11. Tujuan Kendaraan -->
+                        <div class="form-group">
+                            <label>11. Tujuan Kendaraan</label>
+                            <input type="text" id="tujuan" placeholder="Contoh: Bengkel, Kantor, Gudang">
+                        </div>
+
+                        <!-- 5. Tanggal -->
+                        <div class="form-group">
+                            <label>5. Tanggal</label>
+                            <input type="date" id="tanggal" required>
+                        </div>
+
+                        <!-- 6. Waktu -->
+                        <div class="form-group">
+                            <label>6. Waktu</label>
+                            <input type="time" id="waktu" required>
+                        </div>
+
+                        <!-- 7. Kondisi Kendaraan -->
+                        <div class="form-group">
+                            <label>7. Kondisi Kendaraan</label>
+                            <input type="text" id="kondisi" placeholder="Contoh: Baik, Pecah Kaca" required>
+                        </div>
+
+                        <!-- 8. KM Kendaraan -->
+                        <div class="form-group">
+                            <label>8. KM Kendaraan</label>
+                            <input type="number" id="km" placeholder="0" required>
+                        </div>
+
+                        <!-- 9. BBM -->
+                        <div class="form-group">
+                            <label>9. BBM</label>
+                            <input type="text" id="bbm" placeholder="Full, 1/2, 10 Liter" required>
+                        </div>
+
+                        <!-- 10. No Rangka / No Mesin -->
+                        <div class="form-group full-width">
+                            <label>10. No Rangka / No Mesin</label>
+                            <input type="text" id="noRangka" placeholder="Nomor Identitas Kendaraan" style="text-transform: uppercase;">
+                        </div>
+
+                        <!-- 12. Petugas Jaga (UPDATED LIST) -->
+                        <div class="form-group full-width">
+                            <label>12. Petugas Jaga</label>
+                            <select id="petugas" required>
+                                <option value="">-- Pilih Petugas --</option>
+                                <option value="Agus Muslim">Agus Muslim</option>
+                                <option value="Deni Permana">Deni Permana</option>
+                                <option value="Sandi Muhamad Ramdani">Sandi Muhamad Ramdani</option>
+                                <option value="Cucu Rustandi">Cucu Rustandi</option>
+                                <option value="Mochammad Alfarid Zenn">Mochammad Alfarid Zenn</option>
+                                <option value="Deri Herdiansyah">Deri Herdiansyah</option>
+                                <option value="Nandang Suhendar">Nandang Suhendar</option>
+                                <option value="Zemi">Zemi</option>
+                                <option value="Service Advisor">Service Advisor</option>
+                            </select>
+                        </div>
+
+                        <!-- 13. Catatan -->
+                        <div class="form-group full-width">
+                            <label>13. Catatan Petugas Jaga</label>
+                            <textarea id="catatan" rows="3" placeholder="Catatan tambahan..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; text-align: right;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ph ph-floppy-disk"></i> Simpan Data
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 2: DASHBOARD -->
+        <div id="dashboard" class="section fade-in hidden">
+            <div class="stats-grid">
+                <!-- Stat Masuk -->
+                <div class="stat-card blue">
+                    <div class="stat-label">Kendaraan Masuk</div>
+                    <div class="stat-value" id="statMasuk">0</div>
+                    <div class="stat-icon"><i class="ph ph-arrow-right-in"></i></div>
+                    <small style="color:var(--text-muted)">Total hari ini</small>
+                </div>
+
+                <!-- Stat Keluar -->
+                <div class="stat-card green">
+                    <div class="stat-label">Kendaraan Keluar</div>
+                    <div class="stat-value" id="statKeluar">0</div>
+                    <div class="stat-icon"><i class="ph ph-arrow-right-out"></i></div>
+                    <small style="color:var(--text-muted)">Total hari ini</small>
+                </div>
+
+                <!-- Stat Menginap -->
+                <div class="stat-card orange">
+                    <div class="stat-label">Kendaraan Menginap</div>
+                    <div class="stat-value" id="statMenginap">0</div>
+                    <div class="stat-icon"><i class="ph ph-moon-stars"></i></div>
+                    <small style="color:var(--text-muted)">Masuk kemarin & belum keluar</small>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    Detail Kendaraan Menginap
+                </div>
+                <div class="table-container">
+                    <table id="menginapTable">
+                        <thead>
+                            <tr>
+                                <th>Plat Polisi</th>
+                                <th>Jenis</th>
+                                <th>Keperluan</th>
+                                <th>Tgl Masuk</th>
+                                <th>Petugas Masuk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: DATA LOG -->
+        <div id="data" class="section fade-in hidden">
+            <div class="card">
+                <div class="card-title">
+                    <div>
+                        Data Log Harian
+                        <input type="date" id="filterDateLog" onchange="renderLogTable()" style="margin-left: 10px; padding: 4px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+                    <button class="btn btn-secondary no-print" onclick="window.print()"><i class="ph ph-printer"></i> Cetak Laporan</button>
+                </div>
+                <div class="table-container">
+                    <table id="logTable">
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Plat</th>
+                                <th>Jenis</th>
+                                <th>Status</th>
+                                <th>Keperluan</th>
+                                <th>Tujuan</th>
+                                <th>Kondisi</th>
+                                <th>KM</th>
+                                <th>BBM</th>
+                                <th>No Rangka</th>
+                                <th>Petugas</th>
+                                <th>Catatan</th>
+                                <th class="no-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JS Data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SETTINGS / ADMIN -->
+        <div id="settings" class="section fade-in hidden">
+            <div class="card">
+                <div class="card-title">
+                    Pengaturan Data (Admin)
+                </div>
+                <p style="margin-bottom: 2rem; color: var(--text-muted);">
+                    Aplikasi ini menggunakan sistem Hybrid. Data disimpan di browser (Lokal) dan bisa dikirim ke Google Sheets (Online).
+                </p>
+                
+                <div class="admin-actions">
+                    <!-- Online Configuration -->
+                    <div class="admin-box" style="border-left: 5px solid var(--info);">
+                        <h3><i class="ph ph-cloud-arrow-up"></i> Koneksi Database Online</h3>
+                        <p>
+                            Masukkan URL Web App dari Google Apps Script di sini agar data tersimpan secara online di Google Sheets.
+                            <br><small>Contoh URL: https://script.google.com/macros/s/.../exec</small>
+                        </p>
+                        
+                        <input type="text" id="scriptUrlInput" placeholder="Paste URL Web App Google Script disini..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <button class="btn btn-info" onclick="saveScriptUrl()">
+                                <i class="ph ph-check"></i> Simpan Konfigurasi
+                            </button>
+                            <span id="connectionStatus" class="connection-status status-disconnected">Tidak Terkoneksi</span>
+                        </div>
+                    </div>
+
+                    <!-- Backup Local -->
+                    <div class="admin-box">
+                        <i class="ph ph-download-simple" style="font-size: 2.5rem; color: var(--hino-blue); display:block; margin-bottom:10px;"></i>
+                        <h3>Backup Data Lokal</h3>
+                        <p>Download seluruh data pencatatan ke dalam file (.json).</p>
+                        <button class="btn btn-primary" onclick="downloadData()">
+                            <i class="ph ph-floppy-disk"></i> Download Data
+                        </button>
+                    </div>
+
+                    <!-- Restore -->
+                    <div class="admin-box">
+                        <i class="ph ph-upload-simple" style="font-size: 2.5rem; color: var(--success); display:block; margin-bottom:10px;"></i>
+                        <h3>Restore Data Lokal</h3>
+                        <p>Upload file backup (.json) untuk memuat ulang data ke browser ini.</p>
+                        <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="uploadData(this)">
+                        <button class="btn btn-success" onclick="document.getElementById('fileInput').click()">
+                            <i class="ph ph-upload"></i> Upload & Restore
+                        </button>
+                    </div>
+
+                    <!-- Reset -->
+                    <div class="admin-box" style="border-color: var(--danger);">
+                        <i class="ph ph-trash" style="font-size: 2.5rem; color: var(--danger); display:block; margin-bottom:10px;"></i>
+                        <h3 style="color: var(--danger);">Hapus Semua Data Lokal</h3>
+                        <p>Menghapus seluruh riwayat dari browser ini.</p>
+                        <button class="btn btn-danger" onclick="clearAllData()">
+                            <i class="ph ph-warning"></i> Reset Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        let logs = JSON.parse(localStorage.getItem('hinoIndosentosaLogsFinal')) || [];
+        let currentBranch = "Rancaekek"; // Default Cabang
+        
+        // Script URL (Default kosong, akan diisi user lewat menu Settings)
+        let GOOGLE_SCRIPT_URL = localStorage.getItem('gScriptUrl') || "";
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setDefaults();
+            updateClock();
+            setInterval(updateClock, 60000);
+            checkConnectionStatus();
+            document.getElementById('filterDateLog').valueAsDate = new Date();
+            
+            // Load saved URL to input if exists
+            if(GOOGLE_SCRIPT_URL) {
+                document.getElementById('scriptUrlInput').value = GOOGLE_SCRIPT_URL;
+            }
+        });
+
+        function setDefaults() {
+            const now = new Date();
+            document.getElementById('tanggal').valueAsDate = now;
+            document.getElementById('waktu').value = now.toTimeString().substring(0,5);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('id-ID', options);
+        }
+
+        function checkConnectionStatus() {
+            const statusEl = document.getElementById('connectionStatus');
+            if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.length > 10) {
+                statusEl.textContent = "Terhubung ke Database Online";
+                statusEl.className = "connection-status status-connected";
+            } else {
+                statusEl.textContent = "Tidak Terkoneksi (Hanya Lokal)";
+                statusEl.className = "connection-status status-disconnected";
+            }
+        }
+
+        // --- URL CONFIGURATION ---
+        function saveScriptUrl() {
+            const url = document.getElementById('scriptUrlInput').value.trim();
+            if (url) {
+                localStorage.setItem('gScriptUrl', url);
+                GOOGLE_SCRIPT_URL = url;
+                alert('URL Database berhasil disimpan!');
+                checkConnectionStatus();
+            } else {
+                alert('URL tidak boleh kosong.');
+            }
+        }
+
+        // --- BRANCH HANDLING ---
+        function handleBranchChange() {
+            currentBranch = document.getElementById('globalBranch').value;
+            if(!document.getElementById('dashboard').classList.contains('hidden')) renderDashboard();
+            if(!document.getElementById('data').classList.contains('hidden')) renderLogTable();
+        }
+
+        // --- AUTO FILL LOGIC ---
+        function autoFillDetails() {
+            const plat = document.getElementById('plat').value.toUpperCase();
+            if(plat.length < 4) return;
+            const lastLog = logs.find(l => l.plat === plat);
+            if(lastLog) {
+                document.getElementById('noRangka').value = lastLog.noRangka || '';
+                document.getElementById('jenisKendaraan').value = lastLog.jenisKendaraan || 'Mobil';
+            }
+        }
+
+        // --- CORE SAVE LOGIC (ONLINE INTEGRATION) ---
+        function handleSubmit(e) {
+            e.preventDefault();
+
+            const newLog = {
+                id: Date.now(),
+                cabang: currentBranch,
+                plat: document.getElementById('plat').value.toUpperCase(),
+                jenisKendaraan: document.getElementById('jenisKendaraan').value,
+                jenisKunjungan: document.getElementById('jenisKunjungan').value,
+                keperluan: document.getElementById('keperluan').value,
+                tujuan: document.getElementById('tujuan').value,
+                tanggal: document.getElementById('tanggal').value,
+                waktu: document.getElementById('waktu').value,
+                kondisi: document.getElementById('kondisi').value,
+                km: document.getElementById('km').value,
+                bbm: document.getElementById('bbm').value,
+                noRangka: document.getElementById('noRangka').value.toUpperCase(),
+                petugas: document.getElementById('petugas').value,
+                catatan: document.getElementById('catatan').value,
+                timestamp: new Date().getTime()
+            };
+
+            // 1. Simpan ke Array Lokal
+            logs.unshift(newLog);
+            
+            // 2. Simpan ke LocalStorage
+            localStorage.setItem('hinoIndosentosaLogsFinal', JSON.stringify(logs));
+            
+            // 3. Kirim ke Google Sheets (Jika URL ada)
+            if (GOOGLE_SCRIPT_URL) {
+                sendToGoogleSheets(newLog);
+            } else {
+                alert('Data tersimpan di LOKAL (Browser). \n\nUntuk menyimpan ke Database Online, silakan masukkan URL Google Script di menu "Pengaturan Data".');
+            }
+
+            // 4. Refresh UI
+            renderDashboard();
+            renderLogTable();
+            document.getElementById('logForm').reset();
+            setDefaults();
+        }
+
+        function sendToGoogleSheets(data) {
+            const btn = document.querySelector('#logForm button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner" style="animation: spin 1s linear infinite;"></i> Mengirim...';
+            btn.disabled = true;
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                alert('Data tersimpan di LOKAL dan berhasil dikirim ke DATABASE ONLINE (Google Sheets)!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Data tersimpan di LOKAL. Gagal kirim ke Online (Cek koneksi internet atau URL Script).');
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        // --- DATA MANAGEMENT (BACKUP/RESTORE) ---
+        function downloadData() {
+            const dataStr = JSON.stringify(logs, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const filename = `Backup_Hino_${new Date().toISOString().split('T')[0]}.json`;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function uploadData(inputElement) {
+            const file = inputElement.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        if(confirm('Data lokal akan ditimpa. Lanjutkan?')) {
+                            logs = importedData;
+                            localStorage.setItem('hinoIndosentosaLogsFinal', JSON.stringify(logs));
+                            renderDashboard();
+                            renderLogTable();
+                            alert('Data berhasil dipulihkan (Restore)!');
+                        }
+                    } else { alert('Format file salah.'); }
+                } catch (err) { alert('File corrupt atau bukan JSON.'); }
+                inputElement.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function clearAllData() {
+            if(confirm('Hapus seluruh data?')) {
+                if(confirm('Yakin? Data tidak bisa kembali.')) {
+                    logs = [];
+                    localStorage.removeItem('hinoIndosentosaLogsFinal');
+                    renderDashboard();
+                    renderLogTable();
+                    alert('Data dihapus.');
+                }
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderDashboard() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayLogs = logs.filter(l => l.cabang === currentBranch && l.tanggal === todayStr);
+            const countMasuk = todayLogs.filter(l => l.jenisKunjungan === 'Kendaraan Masuk').length;
+            const countKeluar = todayLogs.filter(l => l.jenisKunjungan === 'Kendaraan Keluar').length;
+            document.getElementById('statMasuk').textContent = countMasuk;
+            document.getElementById('statKeluar').textContent = countKeluar;
+
+            const vehicleStatus = {};
+            const branchLogs = logs.filter(l => l.cabang === currentBranch);
+            branchLogs.forEach(log => {
+                if(!vehicleStatus[log.plat] || log.timestamp > vehicleStatus[log.plat].timestamp) {
+                    vehicleStatus[log.plat] = log;
+                }
+            });
+
+            const menginapList = [];
+            for (const plat in vehicleStatus) {
+                const lastLog = vehicleStatus[plat];
+                if (lastLog.jenisKunjungan === 'Kendaraan Masuk' && lastLog.tanggal < todayStr) {
+                    menginapList.push(lastLog);
+                }
+            }
+            document.getElementById('statMenginap').textContent = menginapList.length;
+
+            const tbody = document.querySelector('#menginapTable tbody');
+            tbody.innerHTML = '';
+            if(menginapList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">Tidak ada kendaraan menginap.</td></tr>';
+            } else {
+                menginapList.forEach(item => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold; color:var(--hino-blue)">${item.plat}</td>
+                            <td>${item.jenisKendaraan}</td>
+                            <td>${item.keperluan}</td>
+                            <td>${item.tanggal} ${item.waktu}</td>
+                            <td>${item.petugas}</td>
+                        </tr>`;
+                });
+            }
+        }
+
+        function renderLogTable() {
+            const filterDate = document.getElementById('filterDateLog').value;
+            const tbody = document.querySelector('#logTable tbody');
+            tbody.innerHTML = '';
+            let displayLogs = logs.filter(l => l.cabang === currentBranch);
+            if(filterDate) displayLogs = displayLogs.filter(l => l.tanggal === filterDate);
+
+            if(displayLogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; padding:2rem;">Tidak ada data.</td></tr>';
+                return;
+            }
+
+            displayLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                const isIn = log.jenisKunjungan === 'Kendaraan Masuk';
+                const badgeClass = isIn ? 'badge-in' : 'badge-out';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><div style="font-weight:bold;">${log.waktu}</div><div style="font-size:0.7rem; color:#888;">${log.tanggal}</div></td>
+                        <td style="font-weight:bold; color:var(--hino-blue);">${log.plat}</td>
+                        <td>${log.jenisKendaraan}</td>
+                        <td><span class="status-badge ${badgeClass}">${log.jenisKunjungan}</span></td>
+                        <td>${log.keperluan}</td>
+                        <td>${log.tujuan || '-'}</td>
+                        <td>${log.kondisi}</td>
+                        <td>${log.km}</td>
+                        <td>${log.bbm}</td>
+                        <td style="font-size:0.75rem; font-family:monospace;">${log.noRangka || '-'}</td>
+                        <td>${log.petugas}</td>
+                        <td style="max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${log.catatan}">${log.catatan || '-'}</td>
+                        <td class="no-print">
+                            <button onclick="deleteLog(${log.id})" style="border:none; background:none; color:red; cursor:pointer; font-size:1.2rem;"><i class="ph ph-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function deleteLog(id) {
+            if(confirm('Hapus data ini?')) {
+                logs = logs.filter(l => l.id !== id);
+                localStorage.setItem('hinoIndosentosaLogsFinal', JSON.stringify(logs));
+                renderDashboard();
+                renderLogTable();
+            }
+        }
+
+        function switchTab(tabId, navEl) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            navEl.classList.add('active');
+
+            const titles = { 'input': 'Input Pencatatan', 'dashboard': 'Dashboard Operasional', 'data': 'Data Log', 'settings': 'Pengaturan Admin' };
+            document.getElementById('pageTitle').textContent = titles[tabId];
+
+            if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'data') renderLogTable();
+        }
+        
+        // CSS Animation for spinner
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
